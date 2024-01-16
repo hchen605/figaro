@@ -332,6 +332,7 @@ class Seq2SeqModule(pl.LightningModule):
     else:
       z, desc_bar_ids = None, None
       
+    #print('z: ', z) #tensor([[  2, 454,  14,  ...
 
     is_done = torch.zeros(batch_size, dtype=torch.bool)
 

@@ -14,8 +14,9 @@ from input_representation import remi2midi
 
 MODEL = os.getenv('MODEL', '')
 
-ROOT_DIR = os.getenv('ROOT_DIR', './lmd_full')
-OUTPUT_DIR = os.getenv('OUTPUT_DIR', './samples')
+#ROOT_DIR = os.getenv('ROOT_DIR', './lmd_full')
+ROOT_DIR = os.getenv('ROOT_DIR', './data')
+OUTPUT_DIR = os.getenv('OUTPUT_DIR', './samples_hh')
 MAX_N_FILES = int(float(os.getenv('MAX_N_FILES', -1)))
 MAX_ITER = int(os.getenv('MAX_ITER', 16_000))
 MAX_BARS = int(os.getenv('MAX_BARS', 32))
@@ -27,7 +28,7 @@ N_MEDLEY_BARS = int(os.getenv('N_MEDLEY_BARS', 16))
 CHECKPOINT = os.getenv('CHECKPOINT', None)
 VAE_CHECKPOINT = os.getenv('VAE_CHECKPOINT', None)
 BATCH_SIZE = int(os.getenv('BATCH_SIZE', 1))
-VERBOSE = int(os.getenv('VERBOSE', 2))
+VERBOSE = int(os.getenv('VERBOSE', 0))
 
 def reconstruct_sample(model, batch, 
   initial_context=1, 
@@ -44,6 +45,9 @@ def reconstruct_sample(model, batch,
     batch_['desc_bar_ids'] = batch['desc_bar_ids']
   if model.description_flavor in ['latent', 'both']:
     batch_['latents'] = batch['latents']
+
+  #print(batch_['description'])
+  print('------ gen test 2 --------')
 
   max_len = seq_len + 1024
   if max_iter > 0:
@@ -114,13 +118,16 @@ def main():
   model.freeze()
   model.eval()
 
+  print('------ gen test 0 --------')
 
-  midi_files = glob.glob(os.path.join(ROOT_DIR, '**/*.mid'), recursive=True)
+  #midi_files = glob.glob(os.path.join(ROOT_DIR, '**/*.mid'), recursive=True)
+  midi_files = glob.glob(ROOT_DIR + '/*.mid', recursive=True)
+  #print(midi_files)
   
-  dm = model.get_datamodule(midi_files, vae_module=vae_module)
-  dm.setup('test')
-  midi_files = dm.test_ds.files
-  random.shuffle(midi_files)
+  # dm = model.get_datamodule(midi_files, vae_module=vae_module)
+  # dm.setup('test')
+  # midi_files = dm.test_ds.files
+  #random.shuffle(midi_files)
 
   if MAX_N_FILES > 0:
     midi_files = midi_files[:MAX_N_FILES]
@@ -139,6 +146,7 @@ def main():
     vae_module=vae_module
   )
 
+  print('------ gen test 1 --------')
 
   start_time = time.time()
   coll = SeqCollator(context_size=-1)

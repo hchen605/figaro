@@ -237,7 +237,7 @@ class MidiDataset(IterableDataset):
     self.split = _get_split(self.files, worker_info)
 
     split_len = len(self.split)
-    
+    #split_len = 1
     for i in range(split_len):
       try:
         current_file = self.load_file(self.split[i])
@@ -320,10 +320,20 @@ class MidiDataset(IterableDataset):
           'position_ids': p_ids,
         }
 
+        #print('x: ', x['input_ids']) #tensor([   2,  605,   14,  ...
+        #desc_events:  ['Bar_1', 'Time Signature_4/4', 'Note Density_0', 'Mean Velocity_21', 'Mean Pitch_9', 'Mean Duration_32', 
+        # 'Instrument_drum', 'Chord_N:N', 'Bar_2', 'Time Signature_4/4', 'Note Density_0', 'Mean Velocity_18', 'Mean Pitch_9', 
+        # 'Mean Duration_32', 'Instrument_drum', 'Chord_N:N', 'Bar_3', 'Time Signature_4/4', 'Note Density_3', 'Mean Velocity_20', 
+        # 'Mean Pitch_15', 'Mean Duration_32', 'Instrument_Bright Acoustic Piano', 'Instrument_Fretless Bass', 'Instrument_Electric Piano 1', 
+        # 'Instrument_String Ensemble 1', 'Instrument_drum', 'Instrument_Acoustic Guitar (steel)', 'Chord_E:min', 
+        # 'Bar_4', 'Time Signature_4/4', 'Note Density_3', 'Mean Velocity_20', 'Mean Pitch_14', 'Mean Duration_32', 'Instrument_Bright Acoustic Piano', 'Instrument_Fretless Bass', 'Instrument_Electric Piano 1', 'Instrument_String Ensemble 1', 'Instrument_drum', 'Instrument_Acoustic Guitar (steel)', 'Chord_C:maj7', 
+        # 'Bar_5', 'Time Signature_4/4', 'Note Density_3', 'Mean Velocity_22', 'Mean Pitch_15', 'Mean Duration_32', 'Instrument_Bright Acoustic Piano', 'Instrument_Fretless Bass', 'Instrument_Electric Piano 1', 'Instrument_String Ensemble 1', 'Instrument_drum', 'Instrument_Acoustic Guitar (steel)', 'Chord_E:min', 'Chord_C:maj7'
+
         if self.description_flavor in ['description', 'both']:
           # Assume that bar_ids are in ascending order (except for EOS)
           min_bar = b_ids[0]
           desc_events = current_file['description']
+          print('------ gen test 3 --------')
           desc_bars = [i for i, event in enumerate(desc_events) if f"{BAR_KEY}_" in event]
           # subtract one since first bar has id == 1
           start_idx = desc_bars[max(0, min_bar - 1)]
@@ -338,9 +348,14 @@ class MidiDataset(IterableDataset):
             desc_bar_ids = desc_bar_ids[start_idx:end_idx]
             start_idx = 0
 
+          print('desc_events: ', desc_events) #['Bar_1', 'Time Signature_4/4', 'Note Density_0',...
+
           desc_bos = torch.tensor(self.desc_vocab.encode([BOS_TOKEN]), dtype=torch.int)
           desc_eos = torch.tensor(self.desc_vocab.encode([EOS_TOKEN]), dtype=torch.int)
           desc_ids = torch.tensor(self.desc_vocab.encode(desc_events), dtype=torch.int)
+
+          #print('desc_ids: ', desc_ids) #tensor([454,  14, 321,  ...
+
           if min_bar == 0:
             desc_ids = torch.cat([desc_bos, desc_ids, desc_eos])
             desc_bar_ids = torch.cat([zero, desc_bar_ids, zero])
@@ -449,6 +464,9 @@ class MidiDataset(IterableDataset):
       kwargs = { key: opts[key] for key in ['instruments', 'chords', 'meta'] if key in opts }
       sample['description'] = self.preprocess_description(sample['description'], **self.description_options)
     
+    #print('sample: ', sample) #'Position_3', 'Instrument_drum', 'Pitch_drum_42', 'Velocity_26' ...
+    #print('sample description: ', sample['description']) #'Note Density_1', 'Mean Velocity_12', 'Mean Pitch_13', 'Mean Duration_32',...
+
     return sample
 
   def get_latent_representation(self, events, cache_key=None, bar_token_mask='<mask>'):
