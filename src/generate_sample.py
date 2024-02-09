@@ -121,7 +121,8 @@ def main():
   print('------ gen test 0 --------')
 
   #midi_files = glob.glob(os.path.join(ROOT_DIR, '**/*.mid'), recursive=True)
-  midi_files = glob.glob(ROOT_DIR + '/*.mid', recursive=True)
+  #midi_files = glob.glob(ROOT_DIR + '/*.mid', recursive=True)
+  midi_files = [ROOT_DIR + '/tested/Honestly_Piano_12.midi']
   #print(midi_files)
   
   # dm = model.get_datamodule(midi_files, vae_module=vae_module)

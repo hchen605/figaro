@@ -47,9 +47,9 @@ def reconstruct_sample(model, batch,
     batch_['latents'] = batch['latents']
 
   print('------ Input description --------')
-  print(batch['desc_events'])
+  #print(batch['desc_events'])
   
-  file_path = 'desc/description.txt'
+  file_path = 'desc/description_honest.txt'
   prefix_condition = 'Bar_'
   with open(file_path, 'w') as file:
     # Write each string from the list to the file
@@ -98,6 +98,7 @@ def main():
 
   #midi_files = glob.glob(os.path.join(ROOT_DIR, '**/*.mid'), recursive=True)
   midi_files = glob.glob(ROOT_DIR + '/*.mid', recursive=True)
+  midi_files = [ROOT_DIR + '/tested/Honestly_Piano_12.midi']
   #print(midi_files)
 
   if MAX_N_FILES > 0:

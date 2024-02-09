@@ -71,7 +71,8 @@ class MidiDataModule(pl.LightningDataModule):
     )
 
     # Use a shuffled dataset only for training
-    self.train_ds = torch.utils.data.datapipes.iter.combinatorics.ShuffleIterDataPipe(self.train_ds, buffer_size=2048)
+    #self.train_ds = torch.utils.data.datapipes.iter.combinatorics.ShuffleIterDataPipe(self.train_ds, buffer_size=2048)
+    self.train_ds = torch.utils.data.datapipes.iter.Shuffler(self.train_ds, buffer_size=2048)
 
     self.collator = SeqCollator(pad_token=self.vocab.to_i(PAD_TOKEN), context_size=self.max_len)
 
@@ -795,8 +796,8 @@ class MidiDataset_Desc(IterableDataset):
     description = rep.get_description()
      
     print('------ gen test 3 --------\n')
-    print(description)
-    file_path = 'desc/description.txt'
+    #print(events)
+    file_path = 'desc/description_honest.txt'
     description = []
     with open(file_path, 'r') as file:
       # Read the content of the file
@@ -815,7 +816,7 @@ class MidiDataset_Desc(IterableDataset):
       # Add the last item in the content to the loaded list
       description.append(content[-1])
       print('------ gen test 4 --------\n')
-      print(description)
+      #print(description)
 
       sample = {
         'events': events,

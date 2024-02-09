@@ -72,6 +72,8 @@ class InputRepresentation():
       raise ValueError("Invalid MIDI file: No time signature defined")
 
     self.resolution = self.pm.resolution
+    #print('---- InputRepresentation ----')
+    #print(self.resolution)
 
     self.note_items = None
     self.tempo_items = None
@@ -83,6 +85,9 @@ class InputRepresentation():
     if do_extract_chords:
       self.extract_chords()
     self._group_items()
+    # print('---- InputRepresentation ----')
+    #print(self.chords)
+    # print(self.note_items)
 
     if strict and len(self.note_items) == 0:
       raise ValueError("Invalid MIDI file: No notes found, empty file.")
