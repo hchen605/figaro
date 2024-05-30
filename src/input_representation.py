@@ -288,7 +288,7 @@ class InputRepresentation():
     return positions_per_bar
   
   def tick_to_position(self, tick):
-    return round(tick / self.pm.resolution * DEFAULT_POS_PER_QUARTER)
+    return round(tick / self.pm.resolution * DEFAULT_POS_PER_QUARTER)#Python rounds to the nearest even number 
 
   # item to event
   def get_remi_events(self):

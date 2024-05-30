@@ -11,6 +11,10 @@ DEFAULT_DURATION_BINS = np.sort(np.concatenate([
   np.arange(48, 4*48, 12), # quarter notes up to 8 bars
   np.arange(4*48, 16*48+1, 24) # half notes up to 16 bars
 ]))
+#[  1   2   3   4   5   6   7   8   9  10  11  12  15  17  18  21  21  24
+#  30  36  42  48  60  72  84  96 108 120 132 144 156 168 180 192 216 240
+# 264 288 312 336 360 384 408 432 456 480 504 528 552 576 600 624 648 672
+# 696 720 744 768]
 DEFAULT_TEMPO_BINS = np.linspace(0, 240, 32+1, dtype=np.int)
 DEFAULT_NOTE_DENSITY_BINS = np.linspace(0, 12, 32+1)
 DEFAULT_MEAN_VELOCITY_BINS = np.linspace(0, 128, 32+1)
